@@ -155,6 +155,33 @@ app.post('/email', async (req, res) => {
   });
 });
 
+app.post('/slack', async (req, res) => {
+  const { channel, text } = req.body;
+
+  if (!channel || !text) {
+    return res.status(400).json({ error: 'Request body must include channel and text' });
+  }
+
+  const webhookUrl = CHANNELS[channel];
+  if (!webhookUrl) {
+    return res.status(400).json({ error: `Unknown channel "${channel}". Valid channels: ${Object.keys(CHANNELS).join(', ')}` });
+  }
+
+  try {
+    const slack = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    if (!slack.ok) throw new Error(`Slack returned ${slack.status}`);
+  } catch (err) {
+    return res.status(502).json({ error: 'Failed to post to Slack', detail: err.message });
+  }
+
+  console.log(`[${new Date().toISOString()}] Direct post → #${channel}`);
+  res.json({ ok: true, channel });
+});
+
 app.get('/health', (_req, res) => {
   const configured = Object.entries(CHANNELS)
     .filter(([, url]) => !!url)
