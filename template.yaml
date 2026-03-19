@@ -33,8 +33,7 @@ Resources:
     Properties:
       Handler: index.handler
       CodeUri: .
-      LoggingConfig:
-        LogRetentionInDays: 7
+      LogRetentionInDays: 7
       Events:
         EmailPost:
           Type: HttpApi
@@ -46,6 +45,11 @@ Resources:
           Properties:
             Path: /health
             Method: GET
+        SlackPost:
+          Type: HttpApi
+          Properties:
+            Path: /slack
+            Method: POST
 
 Outputs:
   ApiUrl:
