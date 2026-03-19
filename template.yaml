@@ -33,7 +33,6 @@ Resources:
     Properties:
       Handler: index.handler
       CodeUri: .
-      LogRetentionInDays: 7
       Events:
         EmailPost:
           Type: HttpApi
@@ -50,6 +49,12 @@ Resources:
           Properties:
             Path: /slack
             Method: POST
+
+  EmailRouterLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${EmailRouterFunction}'
+      RetentionInDays: 7
 
 Outputs:
   ApiUrl:
