@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import Anthropic from '@anthropic-ai/sdk';
+import serverlessHttp from 'serverless-http';
 
 const app = express();
 app.use(express.json());
@@ -8,17 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const CHANNELS = {
-  inbox:       process.env.SLACK_WEBHOOK_INBOX,
-  clients:     process.env.SLACK_WEBHOOK_CLIENTS,
-  money:       process.env.SLACK_WEBHOOK_MONEY,
-  'dev-tools': process.env.SLACK_WEBHOOK_DEV_TOOLS,
-  projects:    process.env.SLACK_WEBHOOK_PROJECTS,
-  'ai-watch':  process.env.SLACK_WEBHOOK_AI_WATCH,
-  inspo:       process.env.SLACK_WEBHOOK_INSPO,
-  newsletters: process.env.SLACK_WEBHOOK_NEWSLETTERS,
-  receipts:    process.env.SLACK_WEBHOOK_RECEIPTS,
-};
+const CHANNELS = JSON.parse(process.env.SLACK_WEBHOOKS || '{}');
 
 const CHANNEL_DESCRIPTIONS = `
 - inbox: general/uncategorized emails that don't fit any other category
@@ -171,15 +162,21 @@ app.get('/health', (_req, res) => {
   res.json({ ok: true, channels_configured: configured });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Email router listening on port ${PORT}`);
+// Lambda handler
+export const handler = serverlessHttp(app);
 
-  const missing = Object.entries(CHANNELS)
-    .filter(([, url]) => !url)
-    .map(([name]) => `SLACK_WEBHOOK_${name.toUpperCase().replace('-', '_')}`);
+// Local development server
+if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Email router listening on port ${PORT}`);
 
-  if (missing.length) {
-    console.warn(`Warning: missing env vars for ${missing.length} channel(s):\n  ${missing.join('\n  ')}`);
-  }
-});
+    const missing = Object.entries(CHANNELS)
+      .filter(([, url]) => !url)
+      .map(([name]) => `SLACK_WEBHOOK_${name.toUpperCase().replace('-', '_')}`);
+
+    if (missing.length) {
+      console.warn(`Warning: missing env vars for ${missing.length} channel(s):\n  ${missing.join('\n  ')}`);
+    }
+  });
+}

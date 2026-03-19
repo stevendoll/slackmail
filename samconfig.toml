@@ -1,0 +1,16 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "slackmail"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+fail_on_empty_changeset = false
+region = "us-east-1"
+s3_prefix = "slackmail"
+resolve_s3 = true
