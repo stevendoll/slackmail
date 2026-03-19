@@ -37,4 +37,5 @@ jobs:
           sam deploy \
             --parameter-overrides \
               AnthropicApiKey="${{ secrets.ANTHROPIC_API_KEY }}" \
-              SlackWebhooks="${{ secrets.SLACK_WEBHOOKS }}"
+              SlackWebhooks="${{ secrets.SLACK_WEBHOOKS }}" \
+              ApiKey="${{ secrets.API_KEY }}"

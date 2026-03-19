@@ -17,6 +17,7 @@ export default defineConfig({
     env: {
       ANTHROPIC_API_KEY: 'test-key',
       SLACK_WEBHOOKS: TEST_WEBHOOKS,
+      API_KEY: 'test-api-key',
     },
   },
 });

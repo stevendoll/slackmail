@@ -11,6 +11,17 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const CHANNELS = JSON.parse(process.env.SLACK_WEBHOOKS || '{}');
 
+const API_KEY = process.env.API_KEY;
+
+app.use((req, res, next) => {
+  if (req.path === '/health') return next();
+  const token = req.headers['authorization']?.replace('Bearer ', '');
+  if (!API_KEY || token !== API_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();
+});
+
 const CHANNEL_DESCRIPTIONS = `
 - inbox: general/uncategorized emails that don't fit any other category
 - clients: client communications, customer support, partnerships, sales leads

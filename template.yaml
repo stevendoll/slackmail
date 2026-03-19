@@ -10,6 +10,10 @@ Parameters:
     Type: String
     NoEcho: true
     Description: 'JSON object mapping channel names to Slack webhook URLs, e.g. {"inbox":"https://...","clients":"https://..."}'
+  ApiKey:
+    Type: String
+    NoEcho: true
+    Description: 'Bearer token required on all requests except /health'
 
 Globals:
   Function:
@@ -21,6 +25,7 @@ Globals:
       Variables:
         ANTHROPIC_API_KEY: !Ref AnthropicApiKey
         SLACK_WEBHOOKS: !Ref SlackWebhooks
+        API_KEY: !Ref ApiKey
 
 Resources:
   EmailRouterFunction:
