@@ -1,0 +1,8 @@
+name = "slackmail-email"
+main = "email-worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+# Set this to your API Gateway URL after first deploy, or use:
+# wrangler secret put SLACKMAIL_URL
+SLACKMAIL_URL = "https://YOUR_API_ID.execute-api.us-east-1.amazonaws.com/email"
