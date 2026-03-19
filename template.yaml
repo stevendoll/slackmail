@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: slackmail - email router to Slack using Claude AI
+
+Parameters:
+  AnthropicApiKey:
+    Type: String
+    NoEcho: true
+  SlackWebhooks:
+    Type: String
+    NoEcho: true
+    Description: 'JSON object mapping channel names to Slack webhook URLs, e.g. {"inbox":"https://...","clients":"https://..."}'
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 30
+    MemorySize: 256
+    Environment:
+      Variables:
+        ANTHROPIC_API_KEY: !Ref AnthropicApiKey
+        SLACK_WEBHOOKS: !Ref SlackWebhooks
+
+Resources:
+  EmailRouterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      CodeUri: .
+      Events:
+        EmailPost:
+          Type: HttpApi
+          Properties:
+            Path: /email
+            Method: POST
+        HealthGet:
+          Type: HttpApi
+          Properties:
+            Path: /health
+            Method: GET
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com'

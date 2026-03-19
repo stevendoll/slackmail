@@ -103,6 +103,9 @@ dist
 # Serverless directories
 .serverless/
 
+# AWS SAM build output
+.aws-sam/
+
 # FuseBox cache
 .fusebox/
 
