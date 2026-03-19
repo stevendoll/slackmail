@@ -189,6 +189,8 @@ app.get('/health', (_req, res) => {
   res.json({ ok: true, channels_configured: configured });
 });
 
+export { app };
+
 // Lambda handler
 export const handler = serverlessHttp(app);
 
