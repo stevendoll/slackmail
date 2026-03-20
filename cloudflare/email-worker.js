@@ -2,10 +2,12 @@ import PostalMime from 'postal-mime';
 
 export default {
   async email(message, env, ctx) {
+    // Forward to fastmail first — email delivery must not depend on Lambda being up
+    await message.forward(env.FORWARD_TO);
+    console.log('forwarded to', env.FORWARD_TO);
+
     try {
       const rawEmail = await new Response(message.raw).arrayBuffer();
-      console.log('raw email bytes:', rawEmail.byteLength);
-
       const parsed = await PostalMime.parse(rawEmail);
       console.log('parsed subject:', parsed.subject);
 
@@ -29,10 +31,9 @@ export default {
         throw new Error(`slackmail returned ${res.status}: ${body}`);
       }
 
-      console.log('slackmail success, forwarding to', env.FORWARD_TO);
-      await message.forward(env.FORWARD_TO);
+      console.log('slackmail success');
     } catch (err) {
-      console.error('worker error:', err.message, err.stack);
+      console.error('slackmail error (email already forwarded):', err.message);
       throw err;
     }
   },

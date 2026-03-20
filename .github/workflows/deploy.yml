@@ -38,4 +38,5 @@ jobs:
             --parameter-overrides \
               AnthropicApiKey="${{ secrets.ANTHROPIC_API_KEY }}" \
               SlackWebhooks="${{ secrets.SLACK_WEBHOOKS }}" \
-              ApiKey="${{ secrets.API_KEY }}"
+              ApiKey="${{ secrets.API_KEY }}" \
+              AlertEmail="${{ secrets.ALERT_EMAIL }}"
