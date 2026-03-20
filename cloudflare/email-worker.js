@@ -29,7 +29,8 @@ export default {
         throw new Error(`slackmail returned ${res.status}: ${body}`);
       }
 
-      console.log('success');
+      console.log('slackmail success, forwarding to', env.FORWARD_TO);
+      await message.forward(env.FORWARD_TO);
     } catch (err) {
       console.error('worker error:', err.message, err.stack);
       throw err;

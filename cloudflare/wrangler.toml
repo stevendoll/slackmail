@@ -5,3 +5,4 @@ workers_dev = false
 
 [vars]
 SLACKMAIL_URL = "https://1rspujsdsb.execute-api.us-east-1.amazonaws.com"
+FORWARD_TO = "t12n@fastmail.com"
