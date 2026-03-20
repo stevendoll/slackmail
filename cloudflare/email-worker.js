@@ -9,9 +9,12 @@ export default {
       const parsed = await PostalMime.parse(rawEmail);
       console.log('parsed subject:', parsed.subject);
 
-      const res = await fetch(env.SLACKMAIL_URL, {
+      const res = await fetch(`${env.SLACKMAIL_URL}/email`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${env.SLACKMAIL_API_KEY}`,
+        },
         body: JSON.stringify({
           from: message.from,
           to: message.to,
