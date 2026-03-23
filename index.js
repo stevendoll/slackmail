@@ -9,7 +9,15 @@ app.use(express.urlencoded({ extended: true }));
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const CHANNELS = JSON.parse(process.env.SLACK_WEBHOOKS || '{}');
+let CHANNELS;
+try {
+  CHANNELS = JSON.parse(process.env.SLACK_WEBHOOKS || '');
+} catch {
+  throw new Error('SLACK_WEBHOOKS is not valid JSON — Lambda cannot start. Fix the secret and redeploy.');
+}
+if (!CHANNELS || Object.keys(CHANNELS).length === 0) {
+  throw new Error('SLACK_WEBHOOKS is empty — Lambda cannot start. Fix the secret and redeploy.');
+}
 
 const API_KEY = process.env.API_KEY;
 
