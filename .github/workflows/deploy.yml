@@ -37,7 +37,7 @@ jobs:
           sam deploy \
             --parameter-overrides \
               AnthropicApiKey="$ANTHROPIC_API_KEY" \
-              SlackWebhooks="$SLACK_WEBHOOKS" \
+              "SlackWebhooks='$SLACK_WEBHOOKS'" \
               ApiKey="$API_KEY" \
               AlertEmail="$ALERT_EMAIL"
         env:
